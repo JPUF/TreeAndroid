@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/dist1"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="@string/proj1_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/dist1" />
+
+    <ImageView
+        android:id="@+id/proj"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="@string/proj1_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/projection1" />
+
+    <TextView
+        android:id="@+id/scientific_name"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.535"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/scientific_name" />
+
+    <ImageView
+        android:id="@+id/dist0"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginEnd="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="@string/proj0_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/dist0" />
+
+    <ImageView
+        android:id="@+id/proj2"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginEnd="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="@string/proj0_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/projection0" />
+
+    <TextView
+        android:id="@+id/notes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="244dp"
+        android:text="@string/notes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/notes" />
+
+</android.support.constraint.ConstraintLayout>
