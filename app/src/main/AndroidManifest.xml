@@ -12,15 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GenusActivity"
-            android:parentActivityName=".SpeciesActivity">
-        </activity>
-        <activity android:name=".SpeciesActivity">
+        <activity
+            android:name=".HomeActivity"
+            android:label="Treesaurus">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".GenusActivity"
+            android:label="Genus"
+            android:parentActivityName=".SpeciesActivity">
+        </activity>
+        <activity
+            android:name=".SpeciesActivity"
+            android:label="Species"
+            android:parentActivityName=".HomeActivity">
         </activity>
     </application>
 
