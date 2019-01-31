@@ -6,71 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".SpeciesActivity">
 
-    <ImageView
-        android:id="@+id/dist1"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="64dp"
-        android:contentDescription="@string/proj1_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/dist1" />
-
-    <ImageView
-        android:id="@+id/proj"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="64dp"
-        android:contentDescription="@string/proj1_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/projection1" />
-
     <TextView
         android:id="@+id/scientific_name"
         android:layout_width="wrap_content"
-        android:layout_height="27dp"
+        android:layout_height="31dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:textSize="24sp"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
+        app:layout_constraintHorizontal_bias="0.575"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/scientific_name" />
-
-    <ImageView
-        android:id="@+id/dist0"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_marginEnd="204dp"
-        android:layout_marginTop="64dp"
-        android:contentDescription="@string/proj0_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/dist0" />
-
-    <ImageView
-        android:id="@+id/proj2"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_marginEnd="204dp"
-        android:layout_marginTop="64dp"
-        android:contentDescription="@string/proj0_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/projection0" />
 
     <TextView
         android:id="@+id/notes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="244dp"
-        android:layout_marginEnd="16dp"
         android:text="@string/notes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -82,13 +38,51 @@
         android:id="@+id/toGenusButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:onClick="toGenus"
         android:text="@string/species_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/projection"
+        android:layout_width="256dp"
+        android:layout_height="128dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scientific_name"
+        app:srcCompat="@drawable/projection" />
+
+    <LinearLayout
+        android:layout_width="256dp"
+        android:layout_height="128dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scientific_name">
+
+        <ImageView
+            android:id="@+id/dist0"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/dist0" />
+
+        <ImageView
+            android:id="@+id/dist1"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/dist1" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
