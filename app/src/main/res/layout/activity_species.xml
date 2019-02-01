@@ -20,20 +20,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/scientific_name" />
 
-    <TextView
-        android:id="@+id/notes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="244dp"
-        android:text="@string/notes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/notes" />
-
     <Button
         android:id="@+id/toGenusButton"
         android:layout_width="wrap_content"
@@ -59,7 +45,25 @@
         app:layout_constraintTop_toBottomOf="@+id/scientific_name"
         app:srcCompat="@drawable/projection" />
 
+    <TextView
+        android:id="@+id/notes"
+        android:layout_width="362dp"
+        android:layout_height="147dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="244dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="8"
+        android:text="@string/notes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/notes" />
+
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="256dp"
         android:layout_height="128dp"
         android:layout_marginEnd="16dp"
@@ -83,6 +87,7 @@
             android:layout_height="128dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/dist1" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

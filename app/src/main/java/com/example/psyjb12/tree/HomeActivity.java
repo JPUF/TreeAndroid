@@ -66,13 +66,10 @@ public class HomeActivity extends AppCompatActivity {
                             text.setText(name);
                         }
                     });
-
                 }catch (IOException e1) {
                     e1.printStackTrace();
                 }
             }
         }.start();
-
     }
-
 }
