@@ -1,9 +1,12 @@
 package com.example.psyjb12.tree;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
 
@@ -30,8 +33,10 @@ public class SpeciesActivity extends AppCompatActivity {
     TextView scientific_name_tv;
     TextView notes_tv;
     TextView characteristics_tv;
+    ImageView dist0_iv;
+    ImageView dist1_iv;
 
-    final String scientific_name = "Acer palmatum";
+    final String scientific_name = "Tsuga canadensis";
     String GBIF_id;
 
     @Override
@@ -41,19 +46,48 @@ public class SpeciesActivity extends AppCompatActivity {
         scientific_name_tv = (TextView) findViewById(R.id.scientific_name);
         notes_tv = (TextView) findViewById(R.id.notes);
         characteristics_tv = (TextView) findViewById(R.id.characteristics);
+        dist0_iv = (ImageView) findViewById(R.id.dist0);
+        dist1_iv = (ImageView) findViewById(R.id.dist1);
         setGBIF_id(this.scientific_name);
-        setScientificName(this.GBIF_id);
         setNotes(this.scientific_name);
-        scientific_name_tv.setText(this.scientific_name);//This should really be achieved within the setSciName() function.
     }
 
     private void setID(String id) {
         this.GBIF_id = id;
         setScientificName(id);
+        setDistribution(id);
+    }
+
+    private void setDistribution(String id) {
+        downloadSetImage(id, "0");
+        downloadSetImage(id, "1");
+    }
+
+    private void downloadSetImage(String id, final String dist){
+        final String urlString = "https://api.gbif.org/v2/map/occurrence/density/0/"+dist+"/0@1x.png?style=orange.marker&srs=EPSG:4326&taxonKey="+id;
+        new Thread() {
+            public void run() {
+                try {
+                    InputStream is = (InputStream) new URL(urlString).getContent();
+                    final Drawable d = Drawable.createFromStream(is, "src");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(dist.equals("0"))
+                                dist0_iv.setImageDrawable(d);
+                            else
+                                dist1_iv.setImageDrawable(d);
+                        }
+                    });
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
     private void setGBIF_id(final String scientific_name) {
         final String scientificName = scientific_name;
-        Log.i("scientificName", scientificName);
         new Thread() {
             public void run() {
                 try {
@@ -70,8 +104,8 @@ public class SpeciesActivity extends AppCompatActivity {
                     JsonElement nameElement = topResult.getAsJsonObject().get("nubKey");
                     final String result = nameElement.getAsString();
                     setID(result);
-                }catch (IOException e1) {
-                    e1.printStackTrace();
+                }catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }.start();
@@ -143,7 +177,7 @@ public class SpeciesActivity extends AppCompatActivity {
                                 treeCharacteristics += "\n";
                         }
                         else {
-                            if(!word.equals("Tree") && !word.equals("Characteristics"))
+                            if(!word.equals("Tree") && !word.equals("Characteristics") && !word.equals("General") && !word.equals("Notes"))
                                 generalNotes += (word + " ");
                         }
                         if (word.equals("Characteristics"))
