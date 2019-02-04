@@ -15,5 +15,5 @@
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/genusTitle" />
+        tools:text="@string/genus_title" />
 </android.support.constraint.ConstraintLayout>

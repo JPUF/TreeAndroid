@@ -29,6 +29,7 @@ public class SpeciesActivity extends AppCompatActivity {
 
     TextView scientific_name_tv;
     TextView notes_tv;
+    TextView characteristics_tv;
 
     final String scientific_name = "Acer palmatum";
     String GBIF_id;
@@ -39,6 +40,7 @@ public class SpeciesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_species);
         scientific_name_tv = (TextView) findViewById(R.id.scientific_name);
         notes_tv = (TextView) findViewById(R.id.notes);
+        characteristics_tv = (TextView) findViewById(R.id.characteristics);
         setGBIF_id(this.scientific_name);
         setScientificName(this.GBIF_id);
         setNotes(this.scientific_name);
@@ -47,6 +49,7 @@ public class SpeciesActivity extends AppCompatActivity {
 
     private void setID(String id) {
         this.GBIF_id = id;
+        setScientificName(id);
     }
     private void setGBIF_id(final String scientific_name) {
         final String scientificName = scientific_name;
@@ -126,16 +129,33 @@ public class SpeciesActivity extends AppCompatActivity {
                     Elements paragraphs = content.getElementsByClass("col-md-6");
                     String pText = null;
                     for (Element p : paragraphs) {
-                        pText = p.text();
+                        result = p.text();
                         break;//can get additional info by removing this break;
                     }
-                    result = pText;
-                    final String notes = result;
-
+                    String [] words = result.split("[\\s]");
+                    String generalNotes = "";
+                    String treeCharacteristics = "";
+                    boolean afterCharacteristics = false;
+                    for(String word:words) {
+                        if(afterCharacteristics) {
+                            treeCharacteristics += (word + " ");
+                            if(word.contains("."))
+                                treeCharacteristics += "\n";
+                        }
+                        else {
+                            if(!word.equals("Tree") && !word.equals("Characteristics"))
+                                generalNotes += (word + " ");
+                        }
+                        if (word.equals("Characteristics"))
+                            afterCharacteristics = true;
+                    }
+                    final String finalNotes = generalNotes;
+                    final String finalCharacteristics = treeCharacteristics;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            notes_tv.setText(result);
+                            notes_tv.setText(finalNotes);
+                            characteristics_tv.setText(finalCharacteristics);
                         }
                     });
                 }catch (IOException e1) {
