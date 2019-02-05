@@ -36,7 +36,7 @@ public class SpeciesActivity extends AppCompatActivity {
     ImageView dist0_iv;
     ImageView dist1_iv;
 
-    final String scientific_name = "Tsuga canadensis";
+    final String scientific_name = "Acer Palmatum";
     String GBIF_id;
 
     @Override
