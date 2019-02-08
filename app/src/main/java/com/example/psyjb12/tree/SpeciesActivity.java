@@ -24,6 +24,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -35,8 +36,11 @@ public class SpeciesActivity extends AppCompatActivity {
     TextView characteristics_tv;
     ImageView dist0_iv;
     ImageView dist1_iv;
+    ImageView tree_img1_iv;
+    ImageView tree_img2_iv;
+    ImageView tree_img3_iv;
 
-    final String scientific_name = "Acer Palmatum";
+    final String scientific_name = "Prunus padus";
     String GBIF_id;
 
     @Override
@@ -48,8 +52,12 @@ public class SpeciesActivity extends AppCompatActivity {
         characteristics_tv = (TextView) findViewById(R.id.characteristics);
         dist0_iv = (ImageView) findViewById(R.id.dist0);
         dist1_iv = (ImageView) findViewById(R.id.dist1);
-        setGBIF_id(this.scientific_name);
+        tree_img1_iv = (ImageView) findViewById(R.id.treeImage1);
+        tree_img2_iv = (ImageView) findViewById(R.id.treeImage2);
+        tree_img3_iv = (ImageView) findViewById(R.id.treeImage3);
+        setGBIF_id(this.scientific_name);//TODO probably won't work when we're not using the hardcoded scientific name.
         setNotes(this.scientific_name);
+        setTreeImages(this.scientific_name);
     }
 
     private void setID(String id) {
@@ -86,6 +94,7 @@ public class SpeciesActivity extends AppCompatActivity {
             }
         }.start();
     }
+
     private void setGBIF_id(final String scientific_name) {
         final String scientificName = scientific_name;
         new Thread() {
@@ -155,7 +164,6 @@ public class SpeciesActivity extends AppCompatActivity {
                     Document doc = null;
                     try {
                         doc = Jsoup.connect("https://selectree.calpoly.edu/tree-detail/"+scientificName.replace(' ', '-')).get();
-                        //doc = Jsoup.connect("https://selectree.calpoly.edu/tree-detail/larix-decidua").get();
                     } catch (HttpStatusException e) {
                         result = "No notes";
                     }
@@ -190,6 +198,58 @@ public class SpeciesActivity extends AppCompatActivity {
                         public void run() {
                             notes_tv.setText(finalNotes);
                             characteristics_tv.setText(finalCharacteristics);
+                        }
+                    });
+                }catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    private void setTreeImages(String name) {
+        final String scientificName = name;
+        new Thread() {
+            String result;
+            public void run() {
+                try {
+                    Document doc = null;
+                    try {
+                        doc = Jsoup.connect("https://selectree.calpoly.edu/tree-detail/"+scientificName.replace(' ', '-')).get();
+                    } catch (HttpStatusException e) {//TODO this catch should probably cover whole process. So result isn't overwritten. Same goes for setNotes()
+                        result = "No Images";
+                    }
+                    Element content = doc.getElementById("content");
+                    Elements galleryClass = content.getElementsByClass("fancybox-buttons");
+                    String imgURLs[] = new String[3];//For now we're just getting 3 images.
+                    int count = 0;
+                    for (Element i : galleryClass) {
+                        imgURLs[count] = "https://selectree.calpoly.edu"+i.attr("href");//gets all image URLs unless for loop is broken.
+                        Log.i("GalleryElements", imgURLs[count]);
+                        count++;
+                        if(count >= 3)
+                            break;
+                    }
+
+                    Drawable images[] = new Drawable[3];
+                    try {
+                        for(int i = 0; i <= 3; i++) {
+                            InputStream iStream = (InputStream) new URL(imgURLs[i]).getContent();
+                            images[i] = Drawable.createFromStream(iStream, "src");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    final Drawable finalImages[] = images;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tree_img1_iv.setImageDrawable(finalImages[0]);
+                            Log.i("drawing", ""+finalImages[0].getIntrinsicWidth());
+                            Log.i("drawing", ""+finalImages[0].getIntrinsicHeight());
+                            tree_img2_iv.setImageDrawable(finalImages[1]);
+                            tree_img3_iv.setImageDrawable(finalImages[2]);
                         }
                     });
                 }catch (IOException e1) {
