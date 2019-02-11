@@ -14,4 +14,5 @@
     <string name="dist0_desc">left half of distribution map</string>
     <string name="projection_desc">the base globe projection image</string>
     <string name="lorem_ip">Nulla pretium nibh sed augue imperdiet fringilla. Quisque turpis ligula, ornare sed lectus quis, porttitor ornare velit. Curabitur feugiat leo in nulla fermentum, a congue erat convallis. Duis molestie, augue sed malesuada maximus, purus elit auctor mauris, sit amet venenatis dolor dui ut est. Quisque hendrerit a nunc eu molestie. Pellentesque ac odio pulvinar, rhoncus lectus non, dapibus turpis. In interdum auctor ligula. Suspendisse sodales mattis aliquet. Phasellus consequat maximus posuere. In tristique mollis lacus, a dignissim libero finibus dignissim. Nunc a eleifend diam. Ut eu elit orci. Ut commodo a ipsum eu pretium. Pellentesque a erat in arcu tristique accumsan.</string>
+    <string name="tree_search_default">Search for a tree</string>
 </resources>

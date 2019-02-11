@@ -19,23 +19,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="82dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Name Here" />
-
-    <Button
-        android:id="@+id/vern"
+    <EditText
+        android:id="@+id/treeSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Get Vernacular"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:ems="10"
+        android:hint="@string/tree_search_default"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:onClick="searchTree"
+        android:text="@android:string/search_go"
+        app:layout_constraintBaseline_toBaselineOf="@+id/treeSearch"
+        app:layout_constraintStart_toEndOf="@+id/treeSearch" />
 </android.support.constraint.ConstraintLayout>

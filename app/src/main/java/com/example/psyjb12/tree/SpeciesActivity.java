@@ -40,13 +40,18 @@ public class SpeciesActivity extends AppCompatActivity {
     ImageView tree_img2_iv;
     ImageView tree_img3_iv;
 
-    final String scientific_name = "Prunus padus";
+    String scientific_name = new String();
     String GBIF_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_species);
+
+        Intent intent = getIntent();
+        this.scientific_name = intent.getStringExtra(HomeActivity.TREE_SEARCH);
+        //String search_name = intent.getStringExtra(HomeActivity.TREE_SEARCH);
+
         scientific_name_tv = (TextView) findViewById(R.id.scientific_name);
         notes_tv = (TextView) findViewById(R.id.notes);
         characteristics_tv = (TextView) findViewById(R.id.characteristics);
@@ -55,6 +60,7 @@ public class SpeciesActivity extends AppCompatActivity {
         tree_img1_iv = (ImageView) findViewById(R.id.treeImage1);
         tree_img2_iv = (ImageView) findViewById(R.id.treeImage2);
         tree_img3_iv = (ImageView) findViewById(R.id.treeImage3);
+
         setGBIF_id(this.scientific_name);//TODO probably won't work when we're not using the hardcoded scientific name.
         setNotes(this.scientific_name);
         setTreeImages(this.scientific_name);
