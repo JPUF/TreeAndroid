@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 try {
-                    String urlString = "http://api.gbif.org/v1/species/search?q="+vernacularText;
+                    String urlString = "http://api.gbif.org/v1/species/search?q="+vernacularText;//TODO need to format to %20 etc.
                     URL url = new URL(urlString);
                     URLConnection request = url.openConnection();
                     request.connect();
