@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Treesaurus</string>
+    <string name="app_name">TreeDB</string>
     <string name="scientific_name">Scientific Name</string>
     <string name="proj0_description">The left half of the world projection</string>
     <string name="proj1_description">The right half of the world projection</string>
@@ -16,4 +16,8 @@
     <string name="lorem_ip">Nulla pretium nibh sed augue imperdiet fringilla. Quisque turpis ligula, ornare sed lectus quis, porttitor ornare velit. Curabitur feugiat leo in nulla fermentum, a congue erat convallis. Duis molestie, augue sed malesuada maximus, purus elit auctor mauris, sit amet venenatis dolor dui ut est. Quisque hendrerit a nunc eu molestie. Pellentesque ac odio pulvinar, rhoncus lectus non, dapibus turpis. In interdum auctor ligula. Suspendisse sodales mattis aliquet. Phasellus consequat maximus posuere. In tristique mollis lacus, a dignissim libero finibus dignissim. Nunc a eleifend diam. Ut eu elit orci. Ut commodo a ipsum eu pretium. Pellentesque a erat in arcu tristique accumsan.</string>
     <string name="tree_search_default">Search for a tree</string>
     <string name="vernacular_search_hint">Search by vernacular name</string>
+    <string name="card_title">Taxus baccata</string>
+    <string name="card_subtitle">Common names: English Yew, Common Yew, European Yew</string>
+    <string name="birch_title">Betula pendula</string>
+    <string name="birch_subtitle">Common names: Silver birch, European White birch, Weeping birch</string>
 </resources>

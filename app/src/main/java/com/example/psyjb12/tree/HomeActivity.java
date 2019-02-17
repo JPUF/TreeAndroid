@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 public class HomeActivity extends AppCompatActivity {
     public static final String TREE_SEARCH = "com.example.psyjb12.SEARCH";
@@ -43,6 +44,19 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToYew(View view) {
+        Intent intent = new Intent(this, SpeciesActivity.class);
+        intent.putExtra(TREE_SEARCH, "Taxus baccata");
+        startActivity(intent);
+    }
+
+    public void goToBirch(View view) {
+        Intent intent = new Intent(this, SpeciesActivity.class);
+        intent.putExtra(TREE_SEARCH, "Betula pendula");
+        startActivity(intent);
+    }
+
+
     public void getScientificFromVernacular(View view) {
         EditText editText = (EditText) findViewById(R.id.vernacularText);
         final String vernacularText = editText.getText().toString();
@@ -51,16 +65,17 @@ public class HomeActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 try {
-                    String urlString = "http://api.gbif.org/v1/species/search?q="+vernacularText;//TODO need to format to %20 etc.
+                    String urlString = "http://api.gbif.org/v1/species/search?q=" + URLEncoder.encode(vernacularText,"UTF-8");
                     URL url = new URL(urlString);
                     URLConnection request = url.openConnection();
                     request.connect();
 
                     JsonParser jp = new JsonParser();
                     JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-                    JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object.
-                    JsonArray results= rootobj.get("results").getAsJsonArray();
+                    JsonObject rootObject = root.getAsJsonObject(); //May be an array, may be an object.
+                    JsonArray results= rootObject.get("results").getAsJsonArray();
                     String scientificName;
+                    /*
                     JsonElement result = results.get(0);
                     try{
                         scientificName = result.getAsJsonObject().get("canonicalName").toString();
@@ -69,10 +84,9 @@ public class HomeActivity extends AppCompatActivity {
                     }
                     scientificName = scientificName.substring(1,scientificName.length()-1);
                     Log.i("vernacular", scientificName);
+                    */
 
-                    goToSpeciesActivity(scientificName);
 
-                    /*
                     for (JsonElement result : results) {//To iterate through all search results. (needed in case the desired species isn't result #1)
                         try{
                             scientificName = result.getAsJsonObject().get("canonicalName").toString();
@@ -81,7 +95,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                         Log.i("vernacular", scientificName);
                     }
-                    */
+                    //goToSpeciesActivity(scientificName);
 
                 }catch (IOException e1) {
                     e1.printStackTrace();
