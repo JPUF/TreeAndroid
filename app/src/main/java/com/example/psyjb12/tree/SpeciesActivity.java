@@ -169,43 +169,46 @@ public class SpeciesActivity extends AppCompatActivity {
                 try {
                     Document doc = null;
                     try {
+                        Log.i("scientificName", "setNotes: "+scientificName);
                         doc = Jsoup.connect("https://selectree.calpoly.edu/tree-detail/"+scientificName.replace(' ', '-')).get();
+
+                        Element content = doc.getElementById("content");
+                        Elements paragraphs = content.getElementsByClass("col-md-6");
+                        String pText = null;
+                        for (Element p : paragraphs) {
+                            result = p.text();
+                            break;//can get additional info by removing this break;
+                        }
+                        String [] words = result.split("[\\s]");
+                        String generalNotes = "";
+                        String treeCharacteristics = "";
+                        boolean afterCharacteristics = false;
+                        for(String word:words) {
+                            if(afterCharacteristics) {
+                                treeCharacteristics += (word + " ");
+                                if(word.contains("."))
+                                    treeCharacteristics += "\n";
+                            }
+                            else {
+                                if(!word.equals("Tree") && !word.equals("Characteristics") && !word.equals("General") && !word.equals("Notes"))
+                                    generalNotes += (word + " ");
+                            }
+                            if (word.equals("Characteristics"))
+                                afterCharacteristics = true;
+                        }
+                        final String finalNotes = generalNotes;
+                        final String finalCharacteristics = treeCharacteristics;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                notes_tv.setText(finalNotes);
+                                characteristics_tv.setText(finalCharacteristics);
+                            }
+                        });
                     } catch (HttpStatusException e) {
                         result = "No notes";
                     }
-                    Element content = doc.getElementById("content");
-                    Elements paragraphs = content.getElementsByClass("col-md-6");
-                    String pText = null;
-                    for (Element p : paragraphs) {
-                        result = p.text();
-                        break;//can get additional info by removing this break;
-                    }
-                    String [] words = result.split("[\\s]");
-                    String generalNotes = "";
-                    String treeCharacteristics = "";
-                    boolean afterCharacteristics = false;
-                    for(String word:words) {
-                        if(afterCharacteristics) {
-                            treeCharacteristics += (word + " ");
-                            if(word.contains("."))
-                                treeCharacteristics += "\n";
-                        }
-                        else {
-                            if(!word.equals("Tree") && !word.equals("Characteristics") && !word.equals("General") && !word.equals("Notes"))
-                                generalNotes += (word + " ");
-                        }
-                        if (word.equals("Characteristics"))
-                            afterCharacteristics = true;
-                    }
-                    final String finalNotes = generalNotes;
-                    final String finalCharacteristics = treeCharacteristics;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            notes_tv.setText(finalNotes);
-                            characteristics_tv.setText(finalCharacteristics);
-                        }
-                    });
+
                 }catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -222,42 +225,44 @@ public class SpeciesActivity extends AppCompatActivity {
                     Document doc = null;
                     try {
                         doc = Jsoup.connect("https://selectree.calpoly.edu/tree-detail/"+scientificName.replace(' ', '-')).get();
-                    } catch (HttpStatusException e) {//TODO this catch should probably cover whole process. So result isn't overwritten. Same goes for setNotes()
+
+                        Element content = doc.getElementById("content");
+                        Elements galleryClass = content.getElementsByClass("fancybox-buttons");
+                        String imgURLs[] = new String[3];//For now we're just getting 3 images.
+                        int count = 0;
+                        for (Element i : galleryClass) {
+                            imgURLs[count] = "https://selectree.calpoly.edu"+i.attr("href");//gets all image URLs unless for loop is broken.
+                            Log.i("GalleryElements", imgURLs[count]);
+                            count++;
+                            if(count >= 3)
+                                break;
+                        }
+
+                        Drawable images[] = new Drawable[3];
+                        try {
+                            for(int i = 0; i <= 3; i++) {
+                                InputStream iStream = (InputStream) new URL(imgURLs[i]).getContent();
+                                images[i] = Drawable.createFromStream(iStream, "src");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        final Drawable finalImages[] = images;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tree_img1_iv.setImageDrawable(finalImages[0]);
+                                Log.i("drawing", ""+finalImages[0].getIntrinsicWidth());
+                                Log.i("drawing", ""+finalImages[0].getIntrinsicHeight());
+                                tree_img2_iv.setImageDrawable(finalImages[1]);
+                                tree_img3_iv.setImageDrawable(finalImages[2]);
+                            }
+                        });
+                    } catch (HttpStatusException e) {
                         result = "No Images";
                     }
-                    Element content = doc.getElementById("content");
-                    Elements galleryClass = content.getElementsByClass("fancybox-buttons");
-                    String imgURLs[] = new String[3];//For now we're just getting 3 images.
-                    int count = 0;
-                    for (Element i : galleryClass) {
-                        imgURLs[count] = "https://selectree.calpoly.edu"+i.attr("href");//gets all image URLs unless for loop is broken.
-                        Log.i("GalleryElements", imgURLs[count]);
-                        count++;
-                        if(count >= 3)
-                            break;
-                    }
 
-                    Drawable images[] = new Drawable[3];
-                    try {
-                        for(int i = 0; i <= 3; i++) {
-                            InputStream iStream = (InputStream) new URL(imgURLs[i]).getContent();
-                            images[i] = Drawable.createFromStream(iStream, "src");
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    final Drawable finalImages[] = images;
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            tree_img1_iv.setImageDrawable(finalImages[0]);
-                            Log.i("drawing", ""+finalImages[0].getIntrinsicWidth());
-                            Log.i("drawing", ""+finalImages[0].getIntrinsicHeight());
-                            tree_img2_iv.setImageDrawable(finalImages[1]);
-                            tree_img3_iv.setImageDrawable(finalImages[2]);
-                        }
-                    });
                 }catch (IOException e1) {
                     e1.printStackTrace();
                 }
