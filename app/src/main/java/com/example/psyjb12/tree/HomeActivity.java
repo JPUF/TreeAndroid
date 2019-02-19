@@ -128,17 +128,26 @@ public class HomeActivity extends AppCompatActivity {
                         vernacularNames.clear();
                         Log.i("vernacular", "result");
                         final String finalName = name;
-                        urlString = "http://api.gbif.org/v1/species/search?q='"+ URLEncoder.encode(finalName, "UTF-8")+"'&limit=1";
+                        urlString = "http://api.gbif.org/v1/species/search?q='"+ URLEncoder.encode(finalName, "UTF-8")+"'&limit=3";
                         url = new URL(urlString);
                         request = url.openConnection();
                         request.connect();
                         //jp = new JsonParser();
                         root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
                         JsonObject rootobj = root.getAsJsonObject();
+
                         JsonArray nameResults = rootobj.get("results").getAsJsonArray();
-                        JsonElement topResult  = nameResults.getAsJsonArray().get(0);
-                        JsonElement nameElement = topResult.getAsJsonObject().get("nubKey");
-                        final String GBIF_id = nameElement.getAsString();
+
+                        String id = "n/a";
+                        for (JsonElement result : nameResults) {
+                            String nubKey = result.getAsJsonObject().get("nubKey").getAsString();
+                            if(nubKey != null && !nubKey.isEmpty()) {
+                                id = nubKey;
+                            }//TODO else, didn't get valid GBIF id.
+                            Log.i("gbif", id);
+                        }
+
+                        final String GBIF_id = id;//TODO nameElement can be null
 
                         urlString = "http://api.gbif.org/v1/species/"+URLEncoder.encode(GBIF_id, "UTF-8")+"/vernacularNames";
                         url = new URL(urlString);
@@ -227,14 +236,19 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public CardView createTreeCard(String name, ArrayList<String> vernacularNames) {
-        StringBuilder sb = new StringBuilder();
-        for (String n : vernacularNames) {
-            sb.append(n);
-            sb.append(", ");
+        String allNames;
+        if(!vernacularNames.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String n : vernacularNames) {
+                sb.append(n);
+                sb.append(", ");
+            }
+            allNames = sb.toString();
+            if (allNames.length() >= 3)
+                allNames = allNames.substring(0, allNames.length() - 2);
+        } else {
+            allNames = "";
         }
-        String allNames = sb.toString();
-        allNames = allNames.substring(0, allNames.length()-2);
-
         Context context = getApplicationContext();
         CardView cv = new CardView(context);
         ViewGroup.LayoutParams cvParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
