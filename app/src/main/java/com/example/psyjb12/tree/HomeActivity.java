@@ -23,10 +23,12 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class HomeActivity extends AppCompatActivity {
     public static final String TREE_SEARCH = "com.example.psyjb12.SEARCH";
@@ -126,7 +128,7 @@ public class HomeActivity extends AppCompatActivity {
                     final ArrayList<String> vernacularNames = new ArrayList<>();
                     for (String name : uniqueNames) {
                         vernacularNames.clear();
-                        Log.i("vernacular", "result");
+                        Log.i("vernacular", "result "+name);
                         final String finalName = name;
                         urlString = "http://api.gbif.org/v1/species/search?q='"+ URLEncoder.encode(finalName, "UTF-8")+"'&limit=3";
                         url = new URL(urlString);
@@ -136,43 +138,71 @@ public class HomeActivity extends AppCompatActivity {
                         root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
                         JsonObject rootobj = root.getAsJsonObject();
 
+                        ArrayList<JsonElement> badElements = new ArrayList<>();
+                        int index = 0;
                         JsonArray nameResults = rootobj.get("results").getAsJsonArray();
+                        String kingdom;
+                        for (JsonElement result : nameResults ) {//remove all non-plants
+                            try {
+                                kingdom = result.getAsJsonObject().get("kingdom").getAsString();
+                                Log.i("vernacular", "          kingdom = " + kingdom);
+                                if(!kingdom.contains("Plantae")) {
+                                    badElements.add(result);
+                                    Log.i("vernacular", "      would remove this result.");//TODO for some reason this method doesn't actually remove it from the results.
+                                }
+                            } catch (NullPointerException e) {
+                                badElements.add(result);
+                                Log.i("vernacular", "      would remove this result.");
+                            }
+                            index++;
+                        }
+
+                        for (JsonElement e : badElements) {//TODO doesn't work.
+                            nameResults.remove(e);
+                        }
 
                         String id = "n/a";
                         for (JsonElement result : nameResults) {
-                            String nubKey = result.getAsJsonObject().get("nubKey").getAsString();
-                            if(nubKey != null && !nubKey.isEmpty()) {
-                                id = nubKey;
-                            }//TODO else, didn't get valid GBIF id.
-                            Log.i("gbif", id);
-                        }
-
-                        final String GBIF_id = id;//TODO nameElement can be null
-
-                        urlString = "http://api.gbif.org/v1/species/"+URLEncoder.encode(GBIF_id, "UTF-8")+"/vernacularNames";
-                        url = new URL(urlString);
-                        request = url.openConnection();
-                        request.connect();
-
-                        //jp = new JsonParser();
-                        root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-                        rootObject = root.getAsJsonObject(); //May be an array, may be an object.
-                        results= rootObject.get("results").getAsJsonArray();
-                        String vernacularName;
-                        for (JsonElement result : results) {
                             try {
-                                if(result.getAsJsonObject().get("language").toString().contains("eng")) {//if vernacular name is in English.
-                                    vernacularName = result.getAsJsonObject().get("vernacularName").toString();
-                                    vernacularName = vernacularName.substring(1,vernacularName.length()-1);
-                                    if(!vernacularNames.contains(vernacularName)){//if name hasn't been added before.
-                                        vernacularNames.add(vernacularName);
-                                        Log.i("vernacular", "       vernacular: " + vernacularName);
+                                id = result.getAsJsonObject().get("nubKey").getAsString();
+                                Log.i("vernacular", "    "+id);
+
+                                urlString = "http://api.gbif.org/v1/species/"+URLEncoder.encode(id, "UTF-8")+"/vernacularNames";
+                                url = new URL(urlString);
+                                request = url.openConnection();
+                                request.connect();
+
+                                //jp = new JsonParser();
+                                root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+                                rootObject = root.getAsJsonObject();
+                                results= rootObject.get("results").getAsJsonArray();
+                                String vernacularName;
+                                for (JsonElement vResult : results) {
+                                    try {
+                                        if(vResult.getAsJsonObject().get("language").toString().contains("eng")) {//if vernacular name is in English.
+                                            Log.i("vernacular", "      has english name");
+                                            vernacularName = vResult.getAsJsonObject().get("vernacularName").toString();
+                                            vernacularName = vernacularName.substring(1,vernacularName.length()-1);
+                                            if(!vernacularNames.contains(vernacularName)){//if name hasn't been added before.
+                                                vernacularNames.add(vernacularName);
+                                                Log.i("vernacular", "       vernacular: " + vernacularName);
+                                            }
+                                        } else {
+                                            Log.i("vernacular", "      no english common name");
+                                        }
+                                    } catch (NullPointerException e) {
+                                        Log.i("vernacular", "      langauge is null");
+                                        e.printStackTrace();
                                     }
                                 }
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
+                                break;
+                            }
+                            catch (NullPointerException e) {//TODO didn't get valid GBIF id.
+                                vernacularNames.add("No common names found");
+                                Log.i("vernacular", "Null result from GBIF id.");
                             }
                         }
+                        Log.i("vernacular", "       whole list of vernacular names for given tree: "+vernacularNames.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -187,52 +217,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         }.start();
 
-    }
-
-    public void getScientificFromVernacular(String name) {
-        final String vernacularText = name;
-        new Thread() {
-            public void run() {
-                try {
-                    String urlString = "http://api.gbif.org/v1/species/search?q=" + URLEncoder.encode(vernacularText,"UTF-8");
-                    URL url = new URL(urlString);
-                    URLConnection request = url.openConnection();
-                    request.connect();
-
-                    JsonParser jp = new JsonParser();
-                    JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-                    JsonObject rootObject = root.getAsJsonObject(); //May be an array, may be an object.
-                    JsonArray results= rootObject.get("results").getAsJsonArray();
-                    String scientificName;
-                    /*
-                    JsonElement result = results.get(0);
-                    try{
-                        scientificName = result.getAsJsonObject().get("canonicalName").toString();
-                    } catch (NullPointerException e) {
-                        scientificName = result.getAsJsonObject().get("scientificName").toString();
-                    }
-                    scientificName = scientificName.substring(1,scientificName.length()-1);
-                    Log.i("vernacular", scientificName);
-                    */
-                    //TODO needs a more robust system to get the appropriate result. Preferably displaying search results for the user to choose.
-
-                    for (JsonElement result : results) {//To iterate through all search results. (needed in case the desired species isn't result #1)
-                        try{
-                            scientificName = result.getAsJsonObject().get("canonicalName").toString();
-                            scientificName = scientificName.substring(1,scientificName.length()-1);
-                            Log.i("scientificName", scientificName);
-                            goToSpeciesActivity(scientificName);
-                        } catch (NullPointerException e) {
-                            scientificName = result.getAsJsonObject().get("scientificName").toString();
-                            scientificName = scientificName.substring(1,scientificName.length()-1);
-                            goToSpeciesActivity(scientificName);
-                        }
-                    }
-                }catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }.start();
     }
 
     public CardView createTreeCard(String name, ArrayList<String> vernacularNames) {
@@ -288,6 +272,15 @@ public class HomeActivity extends AppCompatActivity {
         outer_layout.addView(inner_layout);
         cv.addView(outer_layout);
 
+        final String finalName = name;
+        cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSpeciesActivity(finalName);
+            }
+        });
+
         return cv;
     }
+
 }
