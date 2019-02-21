@@ -88,7 +88,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     });
 
-                    String urlString = "http://api.gbif.org/v1/species/search?q=" + URLEncoder.encode(searchTerm,"UTF-8");
+                    String urlString = "http://api.gbif.org/v1/species/search?q=" + URLEncoder.encode(searchTerm,"UTF-8")+"&rank=SPECIES&highertaxon_key=6&limit=5";
                     URL url = new URL(urlString);
                     URLConnection request = url.openConnection();
                     request.connect();
@@ -137,29 +137,7 @@ public class HomeActivity extends AppCompatActivity {
                         //jp = new JsonParser();
                         root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
                         JsonObject rootobj = root.getAsJsonObject();
-
-                        ArrayList<JsonElement> badElements = new ArrayList<>();
-                        int index = 0;
                         JsonArray nameResults = rootobj.get("results").getAsJsonArray();
-                        String kingdom;
-                        for (JsonElement result : nameResults ) {//remove all non-plants
-                            try {
-                                kingdom = result.getAsJsonObject().get("kingdom").getAsString();
-                                Log.i("vernacular", "          kingdom = " + kingdom);
-                                if(!kingdom.contains("Plantae")) {
-                                    badElements.add(result);
-                                    Log.i("vernacular", "      would remove this result.");//TODO for some reason this method doesn't actually remove it from the results.
-                                }
-                            } catch (NullPointerException e) {
-                                badElements.add(result);
-                                Log.i("vernacular", "      would remove this result.");
-                            }
-                            index++;
-                        }
-
-                        for (JsonElement e : badElements) {//TODO doesn't work.
-                            nameResults.remove(e);
-                        }
 
                         String id = "n/a";
                         for (JsonElement result : nameResults) {
