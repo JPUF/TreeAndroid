@@ -41,6 +41,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         search_results_ll = (LinearLayout) findViewById(R.id.searchResultsLayout);
+        Species yew = new Species("Taxus Baccata");
+        Log.i("id_test", yew.GBIF_id);
     }
 
     public void searchTree(View view) {

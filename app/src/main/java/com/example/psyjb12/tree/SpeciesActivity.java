@@ -247,16 +247,20 @@ public class SpeciesActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+                        String urlString = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/1024px-OSIRIS_Mars_true_color.jpg";
+                        InputStream inputStream = (InputStream) new URL(urlString).getContent();
+                        final Drawable drawable = Drawable.createFromStream(inputStream, "src");
+
                         final Drawable finalImages[] = images;
+
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 tree_img1_iv.setImageDrawable(finalImages[0]);
-                                Log.i("drawing", ""+finalImages[0].getIntrinsicWidth());
-                                Log.i("drawing", ""+finalImages[0].getIntrinsicHeight());
                                 tree_img2_iv.setImageDrawable(finalImages[1]);
-                                tree_img3_iv.setImageDrawable(finalImages[2]);
+                                tree_img3_iv.setImageDrawable(drawable);
                             }
                         });
                     } catch (HttpStatusException e) {
