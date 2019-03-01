@@ -101,7 +101,6 @@ public class Species {
                             }
                         } //else no english name.
                     } catch (NullPointerException e) {
-                        //Log.i("vernacular", "      langauge is null");
                         e.printStackTrace();
                     }
                 }
