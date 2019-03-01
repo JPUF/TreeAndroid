@@ -1,6 +1,5 @@
 package com.example.psyjb12.tree;
 
-import android.os.HandlerThread;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -25,7 +24,8 @@ public class Species {
 
     public Species(String scientific_name) {
         this.scientific_name = scientific_name;
-        this.GBIF_id = setGBIF_id(scientific_name);
+        this.GBIF_id = setGBIFid(scientific_name);
+        this.vernacular_names = setVernacularNames(this.GBIF_id);
     }
 
     private class IDThread implements Runnable {
@@ -53,15 +53,14 @@ public class Species {
             }catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
-        public String getGBIF_id() {
+        private String getGBIF_id() {
             return GBIF_id;
         }
     }
 
-    private String setGBIF_id(String scientific_name) {
+    private String setGBIFid(String scientific_name) {
         IDThread id_thread = new IDThread(scientific_name);
         Thread t = new Thread(id_thread);
         t.start();
@@ -71,5 +70,60 @@ public class Species {
             e.printStackTrace();
         }
         return id_thread.getGBIF_id();
+    }
+
+    private class VernacularThread implements Runnable {
+        private volatile ArrayList<String> vernacularNames;
+        String id;
+        VernacularThread(String gbif_id) { this.id = gbif_id; }
+
+        @Override
+        public void run() {
+            try {
+                String urlString = "http://api.gbif.org/v1/species/" + URLEncoder.encode(id, "UTF-8") + "/vernacularNames";
+                URL url = new URL(urlString);
+                URLConnection request = url.openConnection();
+                request.connect();
+                JsonParser jp = new JsonParser();
+                JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+                JsonObject rootobj = root.getAsJsonObject();
+                JsonArray results = rootobj.get("results").getAsJsonArray();
+
+                ArrayList<String> vNames = new ArrayList<>();
+                String vernacularName;
+                for (JsonElement vResult : results) {
+                    try {
+                        if (vResult.getAsJsonObject().get("language").toString().contains("eng")) {//if vernacular name is in English.
+                            vernacularName = vResult.getAsJsonObject().get("vernacularName").toString();
+                            vernacularName = vernacularName.substring(1, vernacularName.length() - 1);
+                            if(!vNames.contains(vernacularName)) {//if unique
+                                vNames.add(vernacularName);
+                            }
+                        } //else no english name.
+                    } catch (NullPointerException e) {
+                        //Log.i("vernacular", "      langauge is null");
+                        e.printStackTrace();
+                    }
+                }
+                setVernacularNames(vNames);
+            } catch (Exception e ){
+                e.printStackTrace();
+            }
+        }
+
+        private void setVernacularNames(ArrayList<String> names) { this.vernacularNames = names; }
+        private ArrayList<String> getVernacularNames() { return vernacularNames; }
+    }
+
+    private ArrayList<String> setVernacularNames(String gbif_id) {
+        VernacularThread v_thread = new VernacularThread(gbif_id);
+        Thread t = new Thread(v_thread);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return v_thread.getVernacularNames();
     }
 }

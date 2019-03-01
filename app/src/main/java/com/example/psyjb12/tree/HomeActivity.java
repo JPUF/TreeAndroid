@@ -41,8 +41,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         search_results_ll = (LinearLayout) findViewById(R.id.searchResultsLayout);
-        Species yew = new Species("Taxus Baccata");
-        Log.i("id_test", yew.GBIF_id);
+        Species yew = new Species("Acer palmatum");
+        Log.i("id_test", "yew ID = " + yew.GBIF_id);
+        Log.i("id_test", "Yew vernacular names = " + yew.vernacular_names.toString());
     }
 
     public void searchTree(View view) {
