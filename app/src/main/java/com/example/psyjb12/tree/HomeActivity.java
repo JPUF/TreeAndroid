@@ -45,9 +45,11 @@ public class HomeActivity extends AppCompatActivity {
         Log.i("id_test", "yew ID = " + yew.GBIF_id);
         Log.i("id_test", "Yew vernacular names = " + yew.vernacular_names.toString());
 
-        Species hem = new Species("2687210", "id");
-        Log.i("id_test", "hem ID = " + hem.GBIF_id);
-        Log.i("id_test", "hem vernacular names = " + hem.vernacular_names.toString());
+        Genus ginkgo = new Genus("2687884");
+        for(Species s : ginkgo.children) {
+            Log.i("children", s.GBIF_id + "  " + s.scientific_name + "  " + s.vernacular_names);
+        }
+
     }
 
     public void searchTree(View view) {

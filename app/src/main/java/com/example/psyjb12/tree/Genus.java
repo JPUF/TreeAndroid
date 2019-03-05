@@ -1,5 +1,7 @@
 package com.example.psyjb12.tree;
 
+import android.util.Log;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,10 +20,10 @@ import java.util.ArrayList;
 
 
 public class Genus {
-    private ArrayList<Species> children = new ArrayList<>();
+    public ArrayList<Species> children = new ArrayList<>();
 
-    private Genus(String genusID) {
-        //this.children = setChildren(genusID);
+    public Genus(String genusID) {
+        this.children = setChildren(genusID);
     }
 
 
@@ -36,7 +38,7 @@ public class Genus {
         @Override
         public void run() {
             try {
-                String urlString = "http://api.gbif.org/v1/species/"+URLEncoder.encode(this.gbif_ID, "UTF-8")+"/children";
+                String urlString = "http://api.gbif.org/v1/species/"+URLEncoder.encode(this.gbif_ID, "UTF-8")+"/children?limit=200";
                 URL url = new URL(urlString);
                 URLConnection request = url.openConnection();
                 request.connect();
@@ -45,7 +47,11 @@ public class Genus {
                 JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
                 JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object.
                 JsonArray results = rootobj.get("results").getAsJsonArray();
-                JsonElement topResult  = results.getAsJsonArray().get(0);
+                String childID;
+                for (JsonElement child : results) {
+                    childID = child.getAsJsonObject().get("speciesKey").getAsString();
+                    children.add(new Species(childID, "id"));
+                }
 
                 this.children.add(new Species(gbif_ID, "id"));
             }catch (IOException e) {
