@@ -22,9 +22,15 @@ public class Species {
     public String general_notes;
     public String characteristics;
 
-    public Species(String scientific_name) {
-        this.scientific_name = scientific_name;
-        this.GBIF_id = setGBIFid(scientific_name);
+    public Species(String input, String mode) {
+        if(mode.equals("name")){
+            this.scientific_name = input;
+            this.GBIF_id = setGBIFid(input);
+        }
+        else if (mode.equals("id")) {
+            this.GBIF_id = input;
+            this.scientific_name = setScientificName(input);
+        }
         this.vernacular_names = setVernacularNames(this.GBIF_id);
     }
 
@@ -125,4 +131,51 @@ public class Species {
         }
         return v_thread.getVernacularNames();
     }
+
+    private class NameThread implements Runnable {
+        private volatile String scientificName;
+        String GBIF_id;
+        NameThread(String GBIF_id) {
+            this.GBIF_id = GBIF_id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String urlString = "http://api.gbif.org/v1/species/"+ URLEncoder.encode(this.GBIF_id, "UTF-8");
+                URL url = new URL(urlString);
+                URLConnection request = url.openConnection();
+                request.connect();
+
+                JsonParser jp = new JsonParser();
+                JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+                JsonObject rootobj = root.getAsJsonObject();
+                String name;
+                try {
+                    name = rootobj.get("canonicalName").getAsString();
+                } catch (Exception e) {
+                    name = rootobj.get("scientificName").getAsString();
+                }
+                this.scientificName = name;
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        private String getScientificName() {
+            return scientificName;
+        }
+    }
+
+    private String setScientificName(String GBIF_id) {
+        NameThread name_thread = new NameThread(GBIF_id);
+        Thread t = new Thread(name_thread);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return name_thread.getScientificName();
+    }
+
 }

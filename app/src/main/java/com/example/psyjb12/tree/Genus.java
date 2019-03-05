@@ -21,7 +21,7 @@ public class Genus {
     private ArrayList<Species> children = new ArrayList<>();
 
     private Genus(String genusID) {
-        this.children = setChildren(genusID);
+        //this.children = setChildren(genusID);
     }
 
 
@@ -47,7 +47,7 @@ public class Genus {
                 JsonArray results = rootobj.get("results").getAsJsonArray();
                 JsonElement topResult  = results.getAsJsonArray().get(0);
 
-                this.children.add(new Species());
+                this.children.add(new Species(gbif_ID, "id"));
             }catch (IOException e) {
                 e.printStackTrace();
             }

@@ -41,9 +41,13 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         search_results_ll = (LinearLayout) findViewById(R.id.searchResultsLayout);
-        Species yew = new Species("Acer palmatum");
+        Species yew = new Species("Taxus baccata", "name");
         Log.i("id_test", "yew ID = " + yew.GBIF_id);
         Log.i("id_test", "Yew vernacular names = " + yew.vernacular_names.toString());
+
+        Species hem = new Species("2687210", "id");
+        Log.i("id_test", "hem ID = " + hem.GBIF_id);
+        Log.i("id_test", "hem vernacular names = " + hem.vernacular_names.toString());
     }
 
     public void searchTree(View view) {
@@ -127,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     for (String name: uniqueNames) {
-                        final Species tree = new Species(name);
+                        final Species tree = new Species(name, "name");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
