@@ -48,12 +48,16 @@ public class Genus {
                 JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object.
                 JsonArray results = rootobj.get("results").getAsJsonArray();
                 String childID;
+                String childName;
                 for (JsonElement child : results) {
                     childID = child.getAsJsonObject().get("speciesKey").getAsString();
-                    children.add(new Species(childID, "id"));
+                    try {
+                        childName = child.getAsJsonObject().get("canonicalName").getAsString();
+                    } catch ( Exception e) {
+                        childName = child.getAsJsonObject().get("scientificName").getAsString();
+                    }
+                    children.add(new Species(childID, childName,true));
                 }
-
-                this.children.add(new Species(gbif_ID, "id"));
             }catch (IOException e) {
                 e.printStackTrace();
             }

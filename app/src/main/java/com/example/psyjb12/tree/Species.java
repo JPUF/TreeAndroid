@@ -22,16 +22,20 @@ public class Species {
     public String general_notes;
     public String characteristics;
 
-    public Species(String input, String mode) {
-        if(mode.equals("name")){
-            this.scientific_name = input;
-            this.GBIF_id = setGBIFid(input);
+    public Species(String scientific_name, boolean getVernaculars) {
+        this.scientific_name = scientific_name;
+        this.GBIF_id = setGBIFid(scientific_name);
+        if (getVernaculars) {
+            this.vernacular_names = setVernacularNames(this.GBIF_id);
         }
-        else if (mode.equals("id")) {
-            this.GBIF_id = input;
-            this.scientific_name = setScientificName(input);
+    }
+
+    public Species(String gbif_id, String scientific_name, boolean getVernaculars) {
+        this.scientific_name = scientific_name;
+        this.GBIF_id = gbif_id;
+        if (getVernaculars) {
+            this.vernacular_names = setVernacularNames(this.GBIF_id);
         }
-        this.vernacular_names = setVernacularNames(this.GBIF_id);
     }
 
     private class IDThread implements Runnable {

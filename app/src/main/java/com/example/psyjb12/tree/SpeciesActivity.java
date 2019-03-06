@@ -50,7 +50,11 @@ public class SpeciesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.scientific_name = intent.getStringExtra(HomeActivity.TREE_SEARCH);
-        //String search_name = intent.getStringExtra(HomeActivity.TREE_SEARCH);
+
+        Genus ginkgo = new Genus("2687884");
+        for(Species s : ginkgo.children) {
+            Log.i("children", s.GBIF_id + "  " + s.scientific_name + "  " + s.vernacular_names);
+        }
 
         scientific_name_tv = (TextView) findViewById(R.id.scientific_name);
         notes_tv = (TextView) findViewById(R.id.notes);
@@ -61,7 +65,7 @@ public class SpeciesActivity extends AppCompatActivity {
         tree_img2_iv = (ImageView) findViewById(R.id.treeImage2);
         tree_img3_iv = (ImageView) findViewById(R.id.treeImage3);
 
-        setGBIF_id(this.scientific_name);//TODO probably won't work when we're not using the hardcoded scientific name.
+        setGBIF_id(this.scientific_name);
         setNotes(this.scientific_name);
         setTreeImages(this.scientific_name);
     }
