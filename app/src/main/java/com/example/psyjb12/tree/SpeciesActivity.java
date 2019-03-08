@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class SpeciesActivity extends AppCompatActivity {
 
@@ -50,11 +51,6 @@ public class SpeciesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.scientific_name = intent.getStringExtra(HomeActivity.TREE_SEARCH);
-
-        Genus ginkgo = new Genus("2687884");
-        for(Species s : ginkgo.children) {
-            Log.i("children", s.GBIF_id + "  " + s.scientific_name + "  " + s.vernacular_names);
-        }
 
         scientific_name_tv = (TextView) findViewById(R.id.scientific_name);
         notes_tv = (TextView) findViewById(R.id.notes);
@@ -135,7 +131,7 @@ public class SpeciesActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 try {
-                    String urlString = "http://api.gbif.org/v1/species/"+GBIF_id+"/name";
+                    String urlString = "http://api.gbif.org/v1/species/"+GBIF_id;
                     URL url = new URL(urlString);
                     URLConnection request = url.openConnection();
                     request.connect();
@@ -280,6 +276,9 @@ public class SpeciesActivity extends AppCompatActivity {
 
     public void toGenus(View view) {
         Intent intent = new Intent(this, GenusActivity.class);
+        Genus ginkgo = new Genus("2687884");
+        ArrayList<String> g_children = ginkgo.child_IDs;
+        intent.putExtra("child_IDs", g_children);
         startActivity(intent);
     }
 }

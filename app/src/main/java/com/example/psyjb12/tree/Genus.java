@@ -20,16 +20,16 @@ import java.util.ArrayList;
 
 
 public class Genus {
-    public ArrayList<Species> children = new ArrayList<>();
+    public ArrayList<String> child_IDs;
 
     public Genus(String genusID) {
-        this.children = setChildren(genusID);
+        this.child_IDs = setChildren(genusID);
     }
 
 
 
     private class ChildrenThread implements Runnable {
-        private volatile ArrayList<Species> children = new ArrayList<>();
+        private volatile ArrayList<String> child_IDs = new ArrayList<>();
         String gbif_ID;
         ChildrenThread(String genusID) {
             this.gbif_ID = genusID;
@@ -45,30 +45,24 @@ public class Genus {
 
                 JsonParser jp = new JsonParser();
                 JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-                JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object.
-                JsonArray results = rootobj.get("results").getAsJsonArray();
+                JsonObject rootObj = root.getAsJsonObject(); //May be an array, may be an object.
+                JsonArray results = rootObj.get("results").getAsJsonArray();
                 String childID;
-                String childName;
                 for (JsonElement child : results) {
                     childID = child.getAsJsonObject().get("speciesKey").getAsString();
-                    try {
-                        childName = child.getAsJsonObject().get("canonicalName").getAsString();
-                    } catch ( Exception e) {
-                        childName = child.getAsJsonObject().get("scientificName").getAsString();
-                    }
-                    children.add(new Species(childID, childName,true));
+                    child_IDs.add(childID);
                 }
             }catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private ArrayList<Species> getChildren() {
-            return children;
+        private ArrayList<String> getChildren() {
+            return child_IDs;
         }
     }
 
-    private ArrayList<Species> setChildren(String genusID) {
+    private ArrayList<String> setChildren(String genusID) {
         ChildrenThread children_thread = new ChildrenThread(genusID);
         Thread t = new Thread(children_thread);
         t.start();

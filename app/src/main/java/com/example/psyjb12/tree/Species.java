@@ -1,7 +1,5 @@
 package com.example.psyjb12.tree;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,6 +16,7 @@ import java.util.ArrayList;
 public class Species {
     public String scientific_name;
     public String GBIF_id;
+    public String parent_id;
     public ArrayList<String> vernacular_names;
     public String general_notes;
     public String characteristics;
@@ -25,6 +24,8 @@ public class Species {
     public Species(String scientific_name, boolean getVernaculars) {
         this.scientific_name = scientific_name;
         this.GBIF_id = setGBIFid(scientific_name);
+        String[] name_and_id = setScientificNameAndParent(this.GBIF_id);
+        this.parent_id = name_and_id[1];
         if (getVernaculars) {
             this.vernacular_names = setVernacularNames(this.GBIF_id);
         }
@@ -33,6 +34,8 @@ public class Species {
     public Species(String gbif_id, String scientific_name, boolean getVernaculars) {
         this.scientific_name = scientific_name;
         this.GBIF_id = gbif_id;
+        String[] name_and_id = setScientificNameAndParent(this.GBIF_id);
+        this.parent_id = name_and_id[1];
         if (getVernaculars) {
             this.vernacular_names = setVernacularNames(this.GBIF_id);
         }
@@ -136,10 +139,11 @@ public class Species {
         return v_thread.getVernacularNames();
     }
 
-    private class NameThread implements Runnable {
+    private class NameIDThread implements Runnable {
         private volatile String scientificName;
+        private volatile String parentID;
         String GBIF_id;
-        NameThread(String GBIF_id) {
+        NameIDThread(String GBIF_id) {
             this.GBIF_id = GBIF_id;
         }
 
@@ -160,18 +164,19 @@ public class Species {
                 } catch (Exception e) {
                     name = rootobj.get("scientificName").getAsString();
                 }
+                this.parentID = rootobj.get("genusKey").getAsString();
                 this.scientificName = name;
             }catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        private String getScientificName() {
-            return scientificName;
+        private String[] getScientificName() {
+            return new String[] {scientificName, parentID};
         }
     }
 
-    private String setScientificName(String GBIF_id) {
-        NameThread name_thread = new NameThread(GBIF_id);
+    private String[] setScientificNameAndParent(String GBIF_id) {
+        NameIDThread name_thread = new NameIDThread(GBIF_id);
         Thread t = new Thread(name_thread);
         t.start();
         try {
