@@ -1,4 +1,4 @@
-# TreeAndroid -> _Treesaurus_
+# TreeAndroid -> _TreeDB_
 An up-in-the-air project.
 
 ### Requirements
